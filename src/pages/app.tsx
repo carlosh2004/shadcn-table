@@ -1,7 +1,8 @@
-import React from 'react';
+import { LoaderCircle } from 'lucide-react';
+
+import { useQuery } from '@tanstack/react-query';
 
 import DataTable from '@/components/data-table';
-import { Character } from '@/types/character';
 
 export default function App() {
   const columns: { id: number; label: string }[] = [
@@ -23,18 +24,18 @@ export default function App() {
     },
   ];
 
-  const [characters, setCharacters] = React.useState<Character[]>([]);
-
-  React.useEffect(() => {
-    fetch('https://rickandmortyapi.com/api/character')
-      .then((Response) => Response.json())
-      .then((data) => setCharacters(data.results))
-      .catch((error) => console.error(error));
-  }, []);
+  const { data = [], isLoading } = useQuery({
+    queryKey: ['characters'],
+    queryFn: async () => {
+      return await fetch('https://rickandmortyapi.com/api/character')
+        .then((response) => response.json())
+        .then((response) => response.results);
+    },
+  });
 
   return (
     <div className="container py-8">
-      <DataTable columns={columns} data={characters} />
+      {isLoading ? <LoaderCircle className="size-4 animate-spin" /> : <DataTable columns={columns} data={data} />}
     </div>
   );
 }
