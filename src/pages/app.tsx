@@ -1,41 +1,47 @@
-import { LoaderCircle } from 'lucide-react';
-
 import { useQuery } from '@tanstack/react-query';
+import { ColumnDef } from '@tanstack/react-table';
 
-import DataTable from '@/components/data-table';
+import DataTable from '@/components/data-table/data-table';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Character } from '@/types/character';
 
 export default function App() {
-  const columns: { id: number; label: string }[] = [
+  const columns: ColumnDef<Character>[] = [
     {
-      id: 1,
-      label: 'Id',
+      accessorKey: 'id',
+      header: 'Id',
     },
     {
-      id: 2,
-      label: 'Name',
+      accessorKey: 'name',
+      header: 'Name',
     },
     {
-      id: 3,
-      label: 'Species',
+      accessorKey: 'species',
+      header: 'Species',
     },
     {
-      id: 4,
-      label: 'Image',
+      accessorKey: 'image',
+      header: 'Image',
+      cell: ({ row }) => (
+        <Avatar>
+          <AvatarImage src={row.original.image} alt={row.original.name} />
+        </Avatar>
+      ),
     },
   ];
 
-  const { data = [], isLoading } = useQuery({
+  const { data = [] } = useQuery({
     queryKey: ['characters'],
     queryFn: async () => {
-      return await fetch('https://rickandmortyapi.com/api/character')
-        .then((response) => response.json())
-        .then((response) => response.results);
+      const response = await fetch('https://rickandmortyapi.com/api/character');
+      const data = await response.json();
+      return data.results;
     },
   });
 
   return (
     <div className="container py-8">
-      {isLoading ? <LoaderCircle className="size-4 animate-spin" /> : <DataTable columns={columns} data={data} />}
+      <DataTable columns={columns} data={data} />
     </div>
   );
 }
