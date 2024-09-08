@@ -30,7 +30,11 @@ export default function App() {
     },
   ];
 
-  const { data = [] } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['characters'],
     queryFn: async () => {
       const response = await fetch('http://localhost:8080/characters.json');
@@ -41,7 +45,7 @@ export default function App() {
 
   return (
     <div className="container py-8">
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} isLoading={isLoading} isError={isError} />
     </div>
   );
 }
