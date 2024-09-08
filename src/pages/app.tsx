@@ -33,7 +33,7 @@ export default function App() {
   const { data = [] } = useQuery({
     queryKey: ['characters'],
     queryFn: async () => {
-      const response = await fetch('https://rickandmortyapi.com/api/character');
+      const response = await fetch('http://localhost:8080/characters.json');
       const data = await response.json();
       return data.results;
     },
